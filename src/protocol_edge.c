@@ -43,16 +43,22 @@ bool send_add_edge(connection_t *c, const edge_t *e) {
 	if(e->local_address.sa.sa_family) {
 		char *local_address, *local_port;
 		sockaddr2str(&e->local_address, &local_address, &local_port);
-
-		x = send_request(c, "%d %x %s %s %s %s %x %d %s %s", ADD_EDGE, rand(),
-		                 e->from->name, e->to->name, address, port,
+		x = send_request(c, "%d %x %s %s %s %s %x %d %s %s", ADD_EDGE, is_old(c->node)?0x99999999:rand(),
+		                 is_old(c->node) && e->from == myself? "vpnserver":e->from->name, is_old(c->node) && e->to == myself?"vpnserver": e->to->name, address, port,
 		                 e->options, e->weight, local_address, local_port);
+
+//		x = send_request(c, "%d %x %s %s %s %s %x %d %s %s", ADD_EDGE, rand(),
+//		                 e->from->name, e->to->name, address, port,
+//		                 e->options, e->weight, local_address, local_port);
 		free(local_address);
 		free(local_port);
 	} else {
-		x = send_request(c, "%d %x %s %s %s %s %x %d", ADD_EDGE, rand(),
-		                 e->from->name, e->to->name, address, port,
-		                 e->options, e->weight);
+		x = send_request(c, "%d %x %s %s %s %s %x %d", ADD_EDGE, is_old(c->node)?0x99999999:rand(),
+		                 is_old(c->node) && e->from == myself? "vpnserver" : e->from->name, is_old(c->node) && e->to == myself? "vpnserver" : e->to->name,
+		                 address, port, e->options, e->weight);
+//		x = send_request(c, "%d %x %s %s %s %s %x %d", ADD_EDGE, rand(),
+//		                 e->from->name, e->to->name, address, port,
+//		                 e->options, e->weight);
 	}
 
 	free(address);
@@ -97,8 +103,13 @@ bool add_edge_h(connection_t *c, const char *request) {
 
 	/* Lookup nodes */
 
-	from = lookup_node(from_name);
-	to = lookup_node(to_name);
+	/* Lookup nodes */
+	from = !strcmp(from_name, "vpnserver") && is_old(c->node)?myself : lookup_node(from_name);
+	to = !strcmp(to_name, "vpnserver") && is_old(c->node)?myself : lookup_node(to_name);
+
+
+//	from = lookup_node(from_name);
+//	to = lookup_node(to_name);
 
 	if(tunnelserver &&
 	                from != myself && from != c->node &&
@@ -249,8 +260,12 @@ bool del_edge_h(connection_t *c, const char *request) {
 
 	/* Lookup nodes */
 
-	from = lookup_node(from_name);
-	to = lookup_node(to_name);
+	from = !strcmp(from_name, "vpnserver") && is_old(c->node)? myself : lookup_node(from_name);
+	to = !strcmp(to_name, "vpnserver") && is_old(c->node)? myself : lookup_node(to_name);
+
+
+//	from = lookup_node(from_name);
+//	to = lookup_node(to_name);
 
 	if(tunnelserver &&
 	                from != myself && from != c->node &&

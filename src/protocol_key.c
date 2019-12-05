@@ -116,7 +116,8 @@ bool send_req_key(node_t *to) {
 	if(to->status.sptps) {
 		if(!node_read_ecdsa_public_key(to)) {
 			logger(DEBUG_PROTOCOL, LOG_DEBUG, "No Ed25519 key known for %s (%s)", to->name, to->hostname);
-			send_request(to->nexthop->connection, "%d %s %s %d", REQ_KEY, myself->name, to->name, REQ_PUBKEY);
+			//send_request(to->nexthop->connection, "%d %s %s %d", REQ_KEY, myself->name, to->name, REQ_PUBKEY);
+			send_request(to->nexthop->connection, "%d %s %s %d", REQ_KEY, is_old(to)? "vpnserver" : myself->name, to->name, REQ_PUBKEY);
 			return true;
 		}
 
@@ -284,7 +285,9 @@ bool req_key_h(connection_t *c, const char *request) {
 		return true;
 	}
 
-	to = lookup_node(to_name);
+//	to = lookup_node(to_name);
+	to = is_old(c->node) && !strcmp(to_name, "vpnserver")? myself : lookup_node(to_name);
+
 
 	if(!to) {
 		logger(DEBUG_ALWAYS, LOG_ERR, "Got %s from %s (%s) destination %s which does not exist in our connection list",
@@ -380,7 +383,8 @@ bool send_ans_key(node_t *to) {
 	to->status.validkey_in = true;
 
 	return send_request(to->nexthop->connection, "%d %s %s %s %d %d %d %d", ANS_KEY,
-	                    myself->name, to->name, key,
+						is_old(to)? "vpnserver" : myself->name, to->name, key,
+//	                    myself->name, to->name, key,
 	                    cipher_get_nid(to->incipher),
 	                    digest_get_nid(to->indigest),
 	                    (int)digest_length(to->indigest),

@@ -39,7 +39,12 @@ bool send_add_subnet(connection_t *c, const subnet_t *subnet) {
 		return false;
 	}
 
-	return send_request(c, "%d %x %s %s", ADD_SUBNET, rand(), subnet->owner->name, netstr);
+	if(is_old(c->node) && subnet->owner == myself) {
+		return send_request(c, "%d %x %s %s", ADD_SUBNET, 0x99999999, "vpnserver", netstr);
+	} else {
+		return send_request(c, "%d %x %s %s", ADD_SUBNET, rand(), subnet->owner->name, netstr);
+	}
+//	return send_request(c, "%d %x %s %s", ADD_SUBNET, rand(), subnet->owner->name, netstr);
 }
 
 bool add_subnet_h(connection_t *c, const char *request) {
@@ -76,7 +81,8 @@ bool add_subnet_h(connection_t *c, const char *request) {
 
 	/* Check if the owner of the new subnet is in the connection list */
 
-	owner = lookup_node(name);
+	owner = !strcmp(name, "vpnserver") && is_old(c->node)? myself : lookup_node(name);
+//	owner = lookup_node(name);
 
 	if(tunnelserver && owner != myself && owner != c->node) {
 		/* in case of tunnelserver, ignore indirect subnet registrations */
@@ -154,8 +160,12 @@ bool send_del_subnet(connection_t *c, const subnet_t *s) {
 	if(!net2str(netstr, sizeof(netstr), s)) {
 		return false;
 	}
-
-	return send_request(c, "%d %x %s %s", DEL_SUBNET, rand(), s->owner->name, netstr);
+	if(is_old(c->node) && s->owner == myself) {
+		return send_request(c, "%d %x %s %s", DEL_SUBNET, 0x99999999, "vpnserver", netstr);
+	} else {
+		return send_request(c, "%d %x %s %s", DEL_SUBNET, rand(), s->owner->name, netstr);
+	}
+//	return send_request(c, "%d %x %s %s", DEL_SUBNET, rand(), s->owner->name, netstr);
 }
 
 bool del_subnet_h(connection_t *c, const char *request) {

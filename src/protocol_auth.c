@@ -171,8 +171,8 @@ bool send_id(connection_t *c) {
 		if(!send_proxyrequest(c)) {
 			return false;
 		}
-
-	return send_request(c, "%d %s %d.%d", ID, myself->connection->name, myself->connection->protocol_major, minor);
+	return send_request(c, "%d %s %d.%d", ID, "vpnserver", myself->connection->protocol_major, myself->connection->protocol_minor);
+//	return send_request(c, "%d %s %d.%d", ID, myself->connection->name, myself->connection->protocol_major, minor);
 }
 
 static bool finalize_invitation(connection_t *c, const char *data, uint16_t len) {
