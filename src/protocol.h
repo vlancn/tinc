@@ -78,6 +78,7 @@ extern ecdsa_t *invitation_key;
 #include "node.h"
 #include "subnet.h"
 
+extern  bool (*request_formats[])(connection_t *, const char *);
 /* Basic functions */
 
 extern bool send_request(struct connection_t *c, const char *format, ...) __attribute__((__format__(printf, 2, 3)));

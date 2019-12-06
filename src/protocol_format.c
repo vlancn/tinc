@@ -16,9 +16,11 @@
 #include "utils.h"
 #include "xalloc.h"
 
+
 /* Jumptable for the request formats */
 
-bool (*request_formats[])(connection_t *, const char *) = {
+ bool (*request_formats[])(connection_t *, const char *) = {
+
 	id_f, metakey_f, challenge_f, chal_reply_f, ack_f,
 	NULL, NULL, termreq_f,
 	ping_f, pong_f,
