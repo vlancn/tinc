@@ -110,8 +110,10 @@ void send_meta_raw(connection_t *c, const char *buffer, size_t length) {
 }
 
 void broadcast_meta(connection_t *from, const char *buffer, size_t length) {
+	int id = atoi(buffer);
 	for list_each(connection_t, c, connection_list)
-		if(c != from && c->edge) {
+		//if(c != from && c->edge) {
+		if (c != from && c->edge && request_formats[id](c, buffer)) {
 			send_meta(c, buffer, length);
 		}
 }

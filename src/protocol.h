@@ -136,4 +136,30 @@ extern bool control_h(struct connection_t *c, const char *request);
 extern bool udp_info_h(struct connection_t *c, const char *request);
 extern bool mtu_info_h(struct connection_t *c, const char *request);
 
+/* Request formats  */
+
+extern bool id_f(struct connection_t *c, const char *request);
+extern bool metakey_f(struct connection_t *c, const char *request);
+extern bool challenge_f(struct connection_t *c, const char *request);
+extern bool chal_reply_f(struct connection_t *c, const char *request);
+extern bool ack_f(struct connection_t *c, const char *request);
+extern bool status_f(struct connection_t *c, const char *request);
+extern bool error_f(struct connection_t *c, const char *request);
+extern bool termreq_f(struct connection_t *c, const char *request);
+extern bool ping_f(struct connection_t *c, const char *request);
+extern bool pong_f(struct connection_t *c, const char *request);
+extern bool add_subnet_f(struct connection_t *c, const char *request);
+extern bool del_subnet_f(struct connection_t *c, const char *request);
+extern bool add_edge_f(struct connection_t *c, const char *request);
+extern bool del_edge_f(struct connection_t *c, const char *request);
+extern bool key_changed_f(struct connection_t *c, const char *request);
+extern bool req_key_f(struct connection_t *c, const char *request);
+extern bool ans_key_f(struct connection_t *c, const char *request);
+extern bool tcppacket_f(struct connection_t *c, const char *request);
+extern bool sptps_tcppacket_f(struct connection_t *c, const char *request);
+extern bool control_f(struct connection_t *c, const char *request);
+extern bool udp_info_f(struct connection_t *c, const char *request);
+extern bool mtu_info_f(struct connection_t *c, const char *request);
+
+
 #endif

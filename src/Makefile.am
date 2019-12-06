@@ -86,6 +86,7 @@ tincd_SOURCES = \
 	protocol_key.c \
 	protocol_misc.c \
 	protocol_subnet.c \
+	protocol_format.c \
 	raw_socket_device.c \
 	route.c route.h \
 	rsa.h \

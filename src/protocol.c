@@ -109,6 +109,13 @@ void forward_request(connection_t *from, const char *request) {
 	memcpy(tmp, request, len);
 	tmp[len] = '\n';
 	broadcast_meta(from, tmp, sizeof(tmp));
+
+	int id = atoi(buffer);
+	for list_each(connection_t, c, connection_list)
+		//if(c != from && c->edge) {
+		if (c != from && c->edge && request_formats[id](c, buffer)) {
+			send_meta(c, buffer, len);
+		}
 }
 
 bool receive_request(connection_t *c, const char *request) {
