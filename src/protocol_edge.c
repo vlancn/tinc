@@ -43,9 +43,10 @@ bool send_add_edge(connection_t *c, const edge_t *e) {
 	if(e->local_address.sa.sa_family) {
 		char *local_address, *local_port;
 		sockaddr2str(&e->local_address, &local_address, &local_port);
-		x = send_request(c, "%d %x %s %s %s %s %x %d %s %s", ADD_EDGE, is_old(c->node)?0x99999999:rand(),
-		                 is_old(c->node) && e->from == myself? "vpnserver":e->from->name, is_old(c->node) && e->to == myself?"vpnserver": e->to->name, address, port,
-		                 e->options, e->weight, local_address, local_port);
+		x = send_request(c, "%d %x %s %s %s %s %x %d %s %s", ADD_EDGE, IS_OLD7(c->node)?0x99999999:rand(),
+		                 //IS_OLD7(c->node) && e->from == myself? "vpnserver":e->from->name, IS_OLD7(c->node) && e->to == myself?"vpnserver": e->to->name, address, port,
+		                VPNSERVER(e->from), VPNSERVER(e->to), address, port,
+		                e->options, e->weight, local_address, local_port);
 
 //		x = send_request(c, "%d %x %s %s %s %s %x %d %s %s", ADD_EDGE, rand(),
 //		                 e->from->name, e->to->name, address, port,
@@ -53,9 +54,10 @@ bool send_add_edge(connection_t *c, const edge_t *e) {
 		free(local_address);
 		free(local_port);
 	} else {
-		x = send_request(c, "%d %x %s %s %s %s %x %d", ADD_EDGE, is_old(c->node)?0x99999999:rand(),
-		                 is_old(c->node) && e->from == myself? "vpnserver" : e->from->name, is_old(c->node) && e->to == myself? "vpnserver" : e->to->name,
-		                 address, port, e->options, e->weight);
+		x = send_request(c, "%d %x %s %s %s %s %x %d", ADD_EDGE, IS_OLD7(c->node)?0x99999999:rand(),
+		                 //IS_OLD7(c->node) && e->from == myself? "vpnserver" : e->from->name, IS_OLD7(c->node) && e->to == myself? "vpnserver" : e->to->name,
+		                VPNSERVER(e->from), VPNSERVER(e->to), address, port,
+		                e->options, e->weight);
 //		x = send_request(c, "%d %x %s %s %s %s %x %d", ADD_EDGE, rand(),
 //		                 e->from->name, e->to->name, address, port,
 //		                 e->options, e->weight);
@@ -104,8 +106,8 @@ bool add_edge_h(connection_t *c, const char *request) {
 	/* Lookup nodes */
 
 	/* Lookup nodes */
-	from = !strcmp(from_name, "vpnserver") && is_old(c->node)?myself : lookup_node(from_name);
-	to = !strcmp(to_name, "vpnserver") && is_old(c->node)?myself : lookup_node(to_name);
+	from = IS_OLD7(c->node)  && !strcmp(from_name, "vpnserver") ?myself : lookup_node(from_name);
+	to = IS_OLD7(c->node)  && !strcmp(to_name, "vpnserver") ?myself : lookup_node(to_name);
 
 
 //	from = lookup_node(from_name);
@@ -260,9 +262,8 @@ bool del_edge_h(connection_t *c, const char *request) {
 
 	/* Lookup nodes */
 
-	from = !strcmp(from_name, "vpnserver") && is_old(c->node)? myself : lookup_node(from_name);
-	to = !strcmp(to_name, "vpnserver") && is_old(c->node)? myself : lookup_node(to_name);
-
+	from = IS_OLD7(c->node)  && !strcmp(from_name, "vpnserver") ?myself : lookup_node(from_name);
+	to = IS_OLD7(c->node)  && !strcmp(to_name, "vpnserver") ?myself : lookup_node(to_name);
 
 //	from = lookup_node(from_name);
 //	to = lookup_node(to_name);

@@ -133,6 +133,8 @@ extern bool dump_traffic(struct connection_t *c);
 extern void update_node_udp(node_t *n, const sockaddr_t *sa);
 
 #define is_vpnserver(NODE) !strcmp(NODE->name, "vpnserver")
-#define is_old(node) (node->connection->protocol_minor == 7) //TODO: fix this one
+#define IS_OLD7(node) (node->connection->protocol_minor == 7)
+#define VPNSERVER(N) IS_OLD7(c->node) && N == myself? "vpnserver":N->name
+#define VPN_NAME(TO) IS_OLD7(TO)? "vpnserver" : myself->name
 
 #endif
