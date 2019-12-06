@@ -13,13 +13,13 @@
 #include "utils.h"
 #include "xalloc.h"
 
-bool tunnelserver = false;
-bool strictsubnets = false;
-bool experimental = true;
+//bool tunnelserver = false;
+//bool strictsubnets = false;
+//bool experimental = true;
 
 /* Jumptable for the request formats */
 
-static bool (*request_formats[])(connection_t *, const char *) = {
+ bool (*request_formats[])(connection_t *, const char *) = {
 	id_f, metakey_f, challenge_f, chal_reply_f, ack_f,
 	NULL, NULL, termreq_f,
 	ping_f, pong_f,
