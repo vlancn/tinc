@@ -137,7 +137,7 @@ extern bool udp_info_h(struct connection_t *c, const char *request);
 extern bool mtu_info_h(struct connection_t *c, const char *request);
 
 /* Request formats  */
-
+extern bool (*request_formats[])(connection_t *, const char *);
 extern bool id_f(struct connection_t *c, const char *request);
 extern bool metakey_f(struct connection_t *c, const char *request);
 extern bool challenge_f(struct connection_t *c, const char *request);

@@ -131,6 +131,7 @@ extern node_t *lookup_node_udp(const sockaddr_t *sa);
 extern bool dump_nodes(struct connection_t *c);
 extern bool dump_traffic(struct connection_t *c);
 extern void update_node_udp(node_t *n, const sockaddr_t *sa);
+extern bool in_same_vlan(const char *n1,  const char *n2);
 
 #define is_vpnserver(NODE) !strcmp(NODE->name, "vpnserver")
 #define IS_OLD7(node) (node->connection->protocol_minor == 7)

@@ -195,6 +195,10 @@ void update_node_udp(node_t *n, const sockaddr_t *sa) {
 	n->maxmtu = MTU;
 }
 
+bool in_same_vlan(const char *n1,  const char *n2) {
+	 return true;
+}
+
 bool dump_nodes(connection_t *c) {
 	for splay_each(node_t, n, node_tree) {
 		char id[2 * sizeof(n->id) + 1];
