@@ -78,7 +78,6 @@ extern ecdsa_t *invitation_key;
 #include "node.h"
 #include "subnet.h"
 
-extern  bool (*request_formats[])(connection_t *, const char *);
 /* Basic functions */
 
 extern bool send_request(struct connection_t *c, const char *format, ...) __attribute__((__format__(printf, 2, 3)));
@@ -149,10 +148,8 @@ extern bool error_f(struct connection_t *c, const char *request);
 extern bool termreq_f(struct connection_t *c, const char *request);
 extern bool ping_f(struct connection_t *c, const char *request);
 extern bool pong_f(struct connection_t *c, const char *request);
-extern bool add_subnet_f(struct connection_t *c, const char *request);
-extern bool del_subnet_f(struct connection_t *c, const char *request);
-extern bool add_edge_f(struct connection_t *c, const char *request);
-extern bool del_edge_f(struct connection_t *c, const char *request);
+extern bool subnet_f(struct connection_t *c, const char *request);
+extern bool edge_f(struct connection_t *c, const char *request);
 extern bool key_changed_f(struct connection_t *c, const char *request);
 extern bool req_key_f(struct connection_t *c, const char *request);
 extern bool ans_key_f(struct connection_t *c, const char *request);

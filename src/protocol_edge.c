@@ -106,9 +106,8 @@ bool add_edge_h(connection_t *c, const char *request) {
 	/* Lookup nodes */
 
 	/* Lookup nodes */
-	from = IS_OLD7(c->node)  && !strcmp(from_name, "vpnserver") ?myself : lookup_node(from_name);
-	to = IS_OLD7(c->node)  && !strcmp(to_name, "vpnserver") ?myself : lookup_node(to_name);
-
+	from = lookup_node_old7(from_name);
+	to = lookup_node_old7(to_name);
 
 //	from = lookup_node(from_name);
 //	to = lookup_node(to_name);

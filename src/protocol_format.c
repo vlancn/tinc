@@ -17,15 +17,15 @@
 #include "xalloc.h"
 
 
-/* Jumptable for the request formats */
+/* Jumptable for the request formats to filter out message broadcasts */
 
  bool (*request_formats[])(connection_t *, const char *) = {
 
 	id_f, metakey_f, challenge_f, chal_reply_f, ack_f,
 	NULL, NULL, termreq_f,
 	ping_f, pong_f,
-	add_subnet_f, del_subnet_f,
-	add_edge_f, del_edge_f,
+	subnet_f, subnet_f,
+	edge_f, edge_f,
 	key_changed_f, req_key_f, ans_key_f, tcppacket_f, control_f,
 	NULL, NULL, /* Not "real" requests (yet) */
 	sptps_tcppacket_f,
@@ -64,7 +64,10 @@ bool pong_f(connection_t *c, const char *request) {
 	return true;
 }
 
-bool add_subnet_f(connection_t *c, const char *request) {
+/*
+ * the target node (c->node) and the node in the protocol message are in_same_vlan
+ */
+bool subnet_f(connection_t *c, const char *request) {
 	if(!c || c == everyone) {
 		return false;
 	}
@@ -72,7 +75,7 @@ bool add_subnet_f(connection_t *c, const char *request) {
 	sscanf(request, "%*d %*x %s", owner);
 	node_t *n = lookup_node(owner);
 
-	logger(DEBUG_PROTOCOL,LOG_DEBUG, "ADD_SUBNET_F  c: %s  onwer: %s, ",c->name, owner);
+	logger(DEBUG_PROTOCOL,LOG_DEBUG, "SUBNET_F  c: %s  onwer: %s, ",c->name, owner);
 	if(n? in_same_vlan(n->name, c->node->name) : 1) {
 			logger(DEBUG_PROTOCOL,LOG_DEBUG,"true9.\n");
 			return true;
@@ -85,28 +88,12 @@ bool add_subnet_f(connection_t *c, const char *request) {
 	return false;
 }
 
-bool del_subnet_f(connection_t *c, const char *request) {
-	if(!c || c == everyone) {
-		return false;
-	}
-	char owner[4096];
-	sscanf(request, "%*d %*x %s", owner);
-	node_t *n = lookup_node(owner);
-
-	logger(DEBUG_PROTOCOL,LOG_DEBUG, "DEL_SUBNET_F  c: %s  onwer: %s, ",c->name, owner);
-	if(n? in_same_vlan(n->name, c->node->name) : 1) {
-			logger(DEBUG_PROTOCOL,LOG_DEBUG,"true9.\n");
-			return true;
-	} else {
-			logger(DEBUG_PROTOCOL,LOG_DEBUG,"false9.\n");
-			return false;
-	}
-
-	logger(DEBUG_PROTOCOL,LOG_DEBUG, "false.\n");
-	return false;
-}
-
-bool add_edge_f(connection_t *c, const char *request) {
+/*
+ return true: help the c->node build complete graph without garbage info
+ 	 ovr - ovr, from or to nodes in_same_vlan with c->node
+ 	 test case: all nodes in_same_vlan are reacheable in graph
+ */
+bool edge_f(connection_t *c, const char *request) {
 
 	if (!c || c == everyone) {
 		return false;
@@ -119,7 +106,9 @@ bool add_edge_f(connection_t *c, const char *request) {
 	node_t *from = lookup_node(from_name);
 	node_t *to = lookup_node(to_name);
 
-	logger(DEBUG_PROTOCOL, LOG_DEBUG, "ADD_EDGE_F  c: %s  from: %s  to: %s,  ",
+	OVR_EDGE(from,to);
+
+	logger(DEBUG_PROTOCOL, LOG_DEBUG, "EDGE_F  c: %s  from: %s  to: %s,  ",
 			c->name, from_name, to_name);
 	if((from? in_same_vlan(from_name, c->node->name) : 1)
 			|| (to? in_same_vlan(to_name, c->node->name) : 1)) {
@@ -131,33 +120,6 @@ bool add_edge_f(connection_t *c, const char *request) {
 	}
 
 	logger(DEBUG_PROTOCOL, LOG_DEBUG, "false.\n");
-	return false;
-}
-
-bool del_edge_f(connection_t *c, const char *request) {
-
-	if(!c || c == everyone) {
-		return false;
-	}
-
-	char from_name[4096];
-	char to_name[4096];
-	sscanf(request, "%*d %*x %s %s", from_name, to_name);
-	logger(DEBUG_PROTOCOL,LOG_DEBUG,"DEL_EDGE_F  c: %s  from: %s  to: %s,  ", c->name, from_name, to_name);
-
-	node_t *from = lookup_node(from_name);
-	node_t *to =  lookup_node(to_name);
-
-	if((from? in_same_vlan(from_name, c->node->name) : 1)
-			|| (to? in_same_vlan(to_name, c->node->name) : 1)) {
-			logger(DEBUG_PROTOCOL,LOG_DEBUG,"true9.\n");
-			return true;
-		} else {
-			logger(DEBUG_PROTOCOL,LOG_DEBUG,"false9.\n");
-			return false;
-		}
-
-	logger(DEBUG_PROTOCOL,LOG_DEBUG,"false.\n");
 	return false;
 }
 

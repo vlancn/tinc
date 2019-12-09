@@ -109,6 +109,9 @@ void send_meta_raw(connection_t *c, const char *buffer, size_t length) {
 	io_set(&c->io, IO_READ | IO_WRITE);
 }
 
+/*
+ * the meta message broadcast is filtered by vlan tagging
+ */
 void broadcast_meta(connection_t *from, const char *buffer, size_t length) {
 	int reqno = atoi(buffer);
 	for list_each(connection_t, c, connection_list)

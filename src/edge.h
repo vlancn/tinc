@@ -52,4 +52,7 @@ extern void edge_del(edge_t *e);
 extern edge_t *lookup_edge(struct node_t *from, struct node_t *to);
 extern bool dump_edges(struct connection_t *c);
 
+//ovr - ovr edge return true, ovr node must starts with ovr
+#define OVR_EDGE(from,to) if (from && to && !strncmp(from->name, "ovr", 3) && !strncmp(to->name, "ovr", 3)) return true;
+
 #endif
